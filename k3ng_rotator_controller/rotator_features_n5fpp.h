@@ -71,29 +71,6 @@
 #define OPTION_EL_POSITION_PULSE_HARD_LIMIT  // stop elevation at lower and upper limits rather than rolling over
 #define OPTION_POSITION_PULSE_INPUT_PULLUPS  // define to enable weak pullups on position pulse inputs
 
-#if defined(FEATURE_ADAFRUIT_SSD1325)
-#  include <SPI.h>
-#  include <Adafruit_GFX.h>
-#  include <Adafruit_SSD1325.h>
-
-// If using software SPI, define CLK and MOSI
-#if defined (GFX_SPI_SOFT)
-#  define OLED_CLK 13
-#  define OLED_MOSI 11
-#endif
-
-// These are needed for both hardware & software SPI
-#  define OLED_DC 8
-#  define OLED_RESET 9
-#  define OLED_CS 10
-
-#  if defined (GFX_SPI_SOFT)
-Adafruit_SSD1325 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-#  else
-Adafruit_SSD1325 display(OLED_DC, OLED_RESET, OLED_CS);
-#  endif
-#endif
-
 /* less often used features and options */
 #define OPTION_GS_232B_EMULATION          // comment this out to default to Yaesu GS-232A emulation when using FEATURE_YAESU_EMULATION above
 //#define FEATURE_ROTATION_INDICATOR_PIN     // activate rotation_indication_pin to indicate rotation

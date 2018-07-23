@@ -103,7 +103,7 @@ uint8_t current_print_row = 0;
 uint8_t current_print_column = 0;
 unsigned long revert_screen_time = 0;
 uint8_t revert_screen_flag = 0;
-int update_time_ms = 0;
+unsigned int update_time_ms = 0;
 uint8_t last_blink_state = 0;
 uint8_t timed_screen_changes_pending = 0;
 

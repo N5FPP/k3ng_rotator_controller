@@ -77,8 +77,6 @@
 #endif
 
 #define K3NG_DISPLAY_LIBRARY_VERSION "2018.03.08.01"
-#define MAX_SCREEN_BUFFER_COLUMNS 20
-#define MAX_SCREEN_BUFFER_ROWS 4
 
 #if defined(FEATURE_ADAFRUIT_SSD1325)
 #  define MAX_SCREEN_BUFFER_COLUMNS 21	// 128 pixels / 6 pixels (smallest font)

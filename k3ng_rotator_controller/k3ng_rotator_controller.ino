@@ -1056,29 +1056,29 @@ DebugClass debug;
   unsigned long last_activity_time_autopark = 0;
 #endif  
 
-#if defined(HARDWARE_N5FPP)
-void ledPulse(int pin = 13, int duration = 1500, int interval = 250)
-{
-    pinModeEnhanced(pin, OUTPUT);
+// #if defined(HARDWARE_N5FPP)
+// void ledPulse(int pin = 13, int duration = 1500, int interval = 250)
+// {
+//     pinModeEnhanced(pin, OUTPUT);
 
-    while (duration > 0) {
-        digitalWriteEnhanced(pin, HIGH);
-        delay(interval);
-        duration -= interval;
-        digitalWriteEnhanced(pin, LOW);
-        delay(interval);
-        duration -= interval;
-    }
-}
-#endif //HARDWARE_N5FPP
+//     while (duration > 0) {
+//         digitalWriteEnhanced(pin, HIGH);
+//         delay(interval);
+//         duration -= interval;
+//         digitalWriteEnhanced(pin, LOW);
+//         delay(interval);
+//         duration -= interval;
+//     }
+// }
+// #endif //HARDWARE_N5FPP
 
 /* ------------------ let's start doing some stuff now that we got the formalities out of the way --------------------*/
 
 void setup() {
 
-#if defined(HARDWARE_N5FPP)
-  ledPulse (2);
-#endif
+// #if defined(HARDWARE_N5FPP)
+//   ledPulse (2);
+// #endif
 
   delay(1000);
 

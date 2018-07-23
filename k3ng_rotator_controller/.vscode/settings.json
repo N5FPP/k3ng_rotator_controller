@@ -1,6 +1,0 @@
-{
-    "terminal.integrated.env.linux": {
-        "PATH": "/home/pascal/.platformio/penv/bin:/home/pascal/.platformio/penv:/home/pascal/bin:/bin:/home/pascal/bin:/bin:/opt/arm-2008q3/bin:/opt/arm-2009q1/bin:/opt/arm/bin:/opt/arduino-1.8.5:/opt/arm:/opt/arm-2008q3:/opt/arm-2009q1:/opt/click.ubuntu.com:/opt/CodeSourcery:/opt/google:/opt/lost+found:/opt/OMAP35x_Android_Graphics_SDK_3_01_00_03:/usr/bin/X11:/usr/local/bin:/usr/local/sbin/:/usr/sbin:/sbin:/etc:/bin:/usr/bin:.:",
-        "PLATFORMIO_CALLER": "vscode"
-    }
-}
