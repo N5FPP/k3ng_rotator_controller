@@ -131,7 +131,7 @@
 
 /* ---------------------- debug stuff - don't touch unless you know what you are doing --------------------------- */
 
-#define DEFAULT_DEBUG_STATE 1 // 1 = activate debug mode at startup; this should be set to zero unless you're debugging something at startup
+#define DEFAULT_DEBUG_STATE 0 // 1 = activate debug mode at startup; this should be set to zero unless you're debugging something at startup
 
 #define DEBUG_DUMP  // normally compile with this activated unless you're really trying to save memory
 
@@ -149,7 +149,7 @@
 //#define DEBUG_EL_MANUAL_ROTATE_LIMITS
 //#define DEBUG_BRAKE
 //#define DEBUG_OVERLAP
-//#define DEBUG_DISPLAY
+#define DEBUG_DISPLAY
 //#define DEBUG_AZ_CHECK_OPERATION_TIMEOUT
 //#define DEBUG_TIMED_BUFFER
 //#define DEBUG_EL_CHECK_OPERATION_TIMEOUT
@@ -176,7 +176,7 @@
 //#define DEBUG_GPS
 //#define DEBUG_GPS_SERIAL
 //#define DEBUG_OFFSET
-#define DEBUG_RTC
+// #define DEBUG_RTC
 #define DEBUG_PROCESS_YAESU
 //#define DEBUG_ETHERNET
 //#define DEBUG_PROCESS_SLAVE
@@ -187,6 +187,6 @@
 //#define DEBUG_POLOLU_LSM303_CALIBRATION
 //#define DEBUG_STEPPER
 //#define DEBUG_AUTOCORRECT
-#define DEBUG_AZ_POSITION_ADAFRUIT_LSM303
+// #define DEBUG_AZ_POSITION_ADAFRUIT_LSM303
 
 

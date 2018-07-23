@@ -557,6 +557,26 @@
 #include "rotator_language.h"
 #include "rotator_debug.h"
 
+// N5FPP - needed to satisfy compiler for forward reference
+#ifdef HARDWARE_N5FPP
+  void digitalWriteEnhanced(uint8_t, uint8_t);
+  void pinModeEnhanced(uint8_t, uint8_t);
+#endif // HARDWARE_N5FPP
+
+// N5FPP - needed to satisfy compiler for forward reference
+#ifdef FEATURE_CLOCK
+  char * clock_status_string();
+  char * coordinate_string();
+  char * timezone_modified_clock_string();
+  char * zulu_clock_string();
+  char * coordinates_to_maidenhead (float, float);
+#endif // FEATURE_CLOCK
+
+// N5FPP - needed to satisfy compiler for forward reference
+#ifdef FEATURE_MOON_TRACKING
+  char * moon_status_string();
+  char * sun_status_string();
+#endif // FEATURE_MOON_TRACKING
 
 /*----------------------- variables -------------------------------------*/
 
@@ -1056,29 +1076,29 @@ DebugClass debug;
   unsigned long last_activity_time_autopark = 0;
 #endif  
 
-// #if defined(HARDWARE_N5FPP)
-// void ledPulse(int pin = 13, int duration = 1500, int interval = 250)
-// {
-//     pinModeEnhanced(pin, OUTPUT);
+#if defined(HARDWARE_N5FPP)
+void ledPulse(int pin = 13, int duration = 1500, int interval = 250)
+{
+    pinModeEnhanced(pin, OUTPUT);
 
-//     while (duration > 0) {
-//         digitalWriteEnhanced(pin, HIGH);
-//         delay(interval);
-//         duration -= interval;
-//         digitalWriteEnhanced(pin, LOW);
-//         delay(interval);
-//         duration -= interval;
-//     }
-// }
-// #endif //HARDWARE_N5FPP
+    while (duration > 0) {
+        digitalWriteEnhanced(pin, HIGH);
+        delay(interval);
+        duration -= interval;
+        digitalWriteEnhanced(pin, LOW);
+        delay(interval);
+        duration -= interval;
+    }
+}
+#endif //HARDWARE_N5FPP
 
 /* ------------------ let's start doing some stuff now that we got the formalities out of the way --------------------*/
 
 void setup() {
 
-// #if defined(HARDWARE_N5FPP)
-//   ledPulse (2);
-// #endif
+#if defined(HARDWARE_N5FPP)
+  ledPulse (2);
+#endif
 
   delay(1000);
 
