@@ -87,6 +87,15 @@
 #define VIOLET        0x5
 #define WHITE         0x7
 
+#define   ATTRIBUTE_NONE   B00000000
+#define   ATTRIBUTE_BLINK  B00000001
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+#  define ATTRIBUTE_INVERT B00000010
+#  define ATTRIBUTE_MASK   B00000011
+#else
+#  define ATTRIBUTE_MASK   B00000001
+#endif
+
 #define LCD_UNDEF 0  
 #define LCD_HEADING 1 
 #define LCD_IDLE_STATUS 2

@@ -14,7 +14,6 @@
 
 
 
-
 #ifdef FEATURE_4_BIT_LCD_DISPLAY
   #include <LiquidCrystal.h>
   LiquidCrystal lcd(lcd_4_bit_rs_pin, lcd_4_bit_enable_pin, lcd_4_bit_d4_pin, lcd_4_bit_d5_pin, lcd_4_bit_d6_pin, lcd_4_bit_d7_pin);
@@ -71,6 +70,28 @@
   LiquidCrystal_I2C lcd(I2C_ADDR,En_pin,Rw_pin,Rs_pin,D4_pin,D5_pin,D6_pin,D7_pin, BACKLIGHT_PIN, POSITIVE);  
 #endif //FEATURE_SAINSMART_I2C_LCD
 
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+#  include <SPI.h>
+#  include <Adafruit_GFX.h>
+#  include <Adafruit_SSD1325.h>
+
+// If using software SPI, define CLK and MOSI
+#if defined (GFX_SPI_SOFT)
+#  define OLED_CLK 13
+#  define OLED_MOSI 11
+#endif
+
+// These are needed for both hardware & software SPI
+#  define OLED_DC 8
+#  define OLED_RESET 9
+#  define OLED_CS 10
+
+#  if defined (GFX_SPI_SOFT)
+Adafruit_SSD1325 lcd(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+#  else
+Adafruit_SSD1325 lcd(OLED_DC, OLED_RESET, OLED_CS);
+#  endif
+#endif
 
 int display_columns = 0;
 uint8_t display_rows = 0;
@@ -110,10 +131,24 @@ K3NGdisplay::K3NGdisplay(int _display_columns, int _display_rows, int _update_ti
 
 void K3NGdisplay::initialize(){
 
+  #if defined(FEATURE_ADAFRUIT_SSD1325)
 
-  lcd.begin(display_columns, display_rows);  // if you are getting an error on this line and do not have
-                                             // any of the LCD display features enabled, remove
-                                             // k3ngdisplay.h and k3ngdisplay.cpp from your ino directory
+    debug.print("K3NGdisplay - ");
+	  debug.print("_display_columns: "); debug.print(display_columns);
+	  debug.print(", _display_rows: "); debug.print(display_rows);
+	  debug.print(", _update_time: "); debug.println(update_time_ms);
+
+    lcd.begin();
+    lcd.display();
+
+    lcd.setTextSize(1);
+    lcd.setTextColor(WHITE, BLACK);
+
+  #else
+    lcd.begin(display_columns, display_rows);  // if you are getting an error on this line and do not have
+                                               // any of the LCD display features enabled, remove
+                                               // k3ngdisplay.h and k3ngdisplay.cpp from your ino directory
+  #endif
 
   #ifdef FEATURE_YOURDUINO_I2C_LCD
     lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
@@ -223,7 +258,12 @@ void K3NGdisplay::clear(){
 
   }
 
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+  lcd.clearDisplay();
+#else
   lcd.clear();
+#endif //ndef FEATURE_ADAFRUIT_SSD1325
+
   current_print_row = 0;
   current_print_column = 0;
   revert_screen_flag = 0;
@@ -263,27 +303,51 @@ void K3NGdisplay::update(){
 
   // update the screen with changes that are pending in screen_buffer_pending
 
-
   for (int x = 0;x < (display_columns*display_rows);x++){  	
-    if (screen_buffer_live[x] != screen_buffer_pending[x]){  // do we have a new character to put on the screen ?
+
+  	if (screen_buffer_live[x] != screen_buffer_pending[x]){  // do we have a new character to put on the screen ?
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+      //TODO - handle text size changes
+  	  lcd.setCursor(Xposition(x)*GFX_TEXT_SIZE_MULT_WIDTH,Yposition(x)*GFX_TEXT_SIZE_MULT_HEIGHT);
+#else
       lcd.setCursor(Xposition(x),Yposition(x));
-      if (screen_buffer_attributes_pending[x] & ATTRIBUTE_BLINK){  // does this character have the blink attribute
+#endif
+
+      uint8_t attributes = screen_buffer_attributes_pending[x] & (uint8_t) ATTRIBUTE_MASK;
+
+      if (attributes & ATTRIBUTE_BLINK){  // does this character have the blink attribute
         if (current_blink_state){
           lcd.print(screen_buffer_pending[x]);
         } else {
           lcd.print(' ');
         }
-      } else {
-        lcd.print(screen_buffer_pending[x]);
+      }
+
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+      if (attributes & ATTRIBUTE_INVERT){ // Inverted attribute?
+    	  lcd.setTextColor(BLACK, WHITE); // 'inverted' text
+          lcd.write(screen_buffer_pending[x]);
+      	  lcd.setTextColor(WHITE, BLACK); // 'inverted' text
+      }
+#endif //FEATURE_ADAFRUIT_SSD1325
+
+      if (!attributes) {
+        lcd.write(screen_buffer_pending[x]);
       }
       screen_buffer_live[x] = screen_buffer_pending[x];
       screen_buffer_attributes_live[x] = screen_buffer_attributes_pending[x];
     } else {  // not a new character, do we have live character on the screen to blink?
       if (last_blink_state != current_blink_state){
         if (screen_buffer_attributes_live[x] & ATTRIBUTE_BLINK){
-        	lcd.setCursor(Xposition(x),Yposition(x));
-        	if (current_blink_state){
-              lcd.print(screen_buffer_live[x]);
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+            //TODO - handle text size changes
+            lcd.setCursor(Xposition(x)*GFX_TEXT_SIZE_MULT_WIDTH,Yposition(x)*GFX_TEXT_SIZE_MULT_HEIGHT);
+#else
+            lcd.setCursor(Xposition(x),Yposition(x));
+#endif
+
+            if (current_blink_state){
+              lcd.write(screen_buffer_live[x]);
       	    } else {
       	      lcd.print(' ');
       	    }
@@ -291,6 +355,10 @@ void K3NGdisplay::update(){
       }
     }
   }
+
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+    lcd.display();
+#endif
 
   last_blink_state = current_blink_state;
 
@@ -302,19 +370,39 @@ void K3NGdisplay::redraw(){
   // redraw the screen with the current screen_buffer_live
 
   for (int x = 0;x < (display_columns*display_rows);x++){   
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+	//TODO - handle text size changes
+    lcd.setCursor(Xposition(x)*GFX_TEXT_SIZE_MULT_WIDTH,Yposition(x)*GFX_TEXT_SIZE_MULT_HEIGHT);
+#else
     lcd.setCursor(Xposition(x),Yposition(x));
-    if (screen_buffer_attributes_live[x] & ATTRIBUTE_BLINK){  // does this character have the blink attribute
+#endif
+
+    uint8_t attributes = screen_buffer_attributes_live[x] & (uint8_t) ATTRIBUTE_MASK;
+
+    if (attributes & ATTRIBUTE_BLINK){  // does this character have the blink attribute
       if (current_blink_state){
         lcd.print(screen_buffer_live[x]);
       } else {
         lcd.print(' ');
       }
-    } else {
+    }
+
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+    if (screen_buffer_attributes_pending[x] & ATTRIBUTE_INVERT){ // Inverted attribute?
+  	  lcd.setTextColor(BLACK, WHITE); // 'inverted' text
+      lcd.write(screen_buffer_live[x]);
+  	  lcd.setTextColor(WHITE, BLACK); // 'inverted' text
+    }
+#endif //FEATURE_ADAFRUIT_SSD1325
+
+    if (!attributes) {
       lcd.print(screen_buffer_live[x]);
     }
   }
 
-
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+    lcd.display();
+#endif
 }	
 
 //-----------------------------------------------------------------------------------------------------
@@ -554,6 +642,7 @@ void K3NGdisplay::print_bottom_right(char * print_string){
 
 	print(print_string,display_columns-length(print_string),display_rows-1);
 }
+
 //-----------------------------------------------------------------------------------------------------
 void K3NGdisplay::print_bottom_left(char * print_string){
 
@@ -652,6 +741,7 @@ int K3NGdisplay::length(char * print_string){
   return char_count;
 
 }
+
 //-----------------------------------------------------------------------------------------------------
 void K3NGdisplay::prepare_for_timed_screen(int ms_to_display){
 
@@ -700,6 +790,7 @@ void K3NGdisplay::print_center_timed_message(char * print_string,char * print_st
   print_center_screen(print_string,print_string2,print_string3,print_string4);
 
 }
+
 //-----------------------------------------------------------------------------------------------------
 void K3NGdisplay::save_current_screen_to_revert_screen_buffer(){
 

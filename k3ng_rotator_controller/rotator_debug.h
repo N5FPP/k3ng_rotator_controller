@@ -20,6 +20,9 @@
 #ifdef HARDWARE_M0UPU
   #include "rotator_features_m0upu.h"
 #endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_features_n5fpp.h"
+#endif    
 #ifdef HARDWARE_TEST
   #include "rotator_features_test.h"
 #endif    

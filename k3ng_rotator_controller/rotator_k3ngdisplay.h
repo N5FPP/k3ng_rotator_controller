@@ -16,7 +16,7 @@
 
                                                               */
 
-#define FEATURE_4_BIT_LCD_DISPLAY
+// #define FEATURE_4_BIT_LCD_DISPLAY
 // #define FEATURE_ADAFRUIT_I2C_LCD
 // #define FEATURE_YOURDUINO_I2C_LCD
 // #define FEATURE_RFROBOT_I2C_DISPLAY
@@ -37,6 +37,9 @@
 #ifdef HARDWARE_M0UPU
   #include "rotator_features_m0upu.h"
 #endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_features_n5fpp.h"
+#endif
 #ifdef HARDWARE_TEST
   #include "rotator_features_test.h"
 #endif    
@@ -53,11 +56,20 @@
 #ifdef HARDWARE_WB6KCN
   #include "rotator_pins_wb6kcn.h"
 #endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_pins_n5fpp.h"
+#endif
 #ifdef HARDWARE_TEST
   #include "rotator_pins_test.h"
 #endif
 #if !defined(HARDWARE_CUSTOM)
   #include "rotator_pins.h"
+#endif
+
+
+#ifdef HARDWARE_N5FPP
+  #include "rotator_settings_n5fpp.h"
+  #include "rotator_debug.h"
 #endif
 
 #if defined(FEATURE_ADAFRUIT_I2C_LCD)
@@ -68,7 +80,23 @@
 #define MAX_SCREEN_BUFFER_COLUMNS 20
 #define MAX_SCREEN_BUFFER_ROWS 4
 
-#define ATTRIBUTE_BLINK B00000001
+#if defined(FEATURE_ADAFRUIT_SSD1325)
+#  define MAX_SCREEN_BUFFER_COLUMNS 21	// 128 pixels / 6 pixels (smallest font)
+#  define MAX_SCREEN_BUFFER_ROWS 8		//  64 pixels / 8 pixels (smallest font)
+#else
+#  define MAX_SCREEN_BUFFER_COLUMNS 20
+#  define MAX_SCREEN_BUFFER_ROWS 4
+#endif
+
+// -- Moved to rotator.h
+//#define   ATTRIBUTE_NONE   B00000000
+//#define   ATTRIBUTE_BLINK  B00000001
+//#if defined(FEATURE_ADAFRUIT_SSD1325)
+//#  define ATTRIBUTE_INVERT B00000010
+//#  define ATTRIBUTE_MASK   B00000011
+//#else
+//#  define ATTRIBUTE_MASK   B00000001
+//#endif
 
 #define TEXT_BLINK_MS 500
 #define WORK_STRING_SIZE 32
@@ -143,6 +171,10 @@ private:
     int buffer_index_position(int x,int y);
 
 };
+
+#ifdef HARDWARE_N5FPP
+extern DebugClass debug;
+#endif
 
 #endif //_K3NGDISPLAY_H
 

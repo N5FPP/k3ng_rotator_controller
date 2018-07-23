@@ -407,11 +407,14 @@
 #ifdef HARDWARE_M0UPU
   #include "rotator_features_m0upu.h"
 #endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_features_n5fpp.h"
+#endif    
 #ifdef HARDWARE_TEST
   #include "rotator_features_test.h"
 #endif    
 #if !defined(HARDWARE_CUSTOM)
-  #include "rotator_features.h" 
+  #include "rotator_features_n5fpp.h" 
 #endif      
   
 #include "rotator_dependencies.h"
@@ -514,6 +517,9 @@
 #ifdef HARDWARE_WB6KCN
   #include "rotator_pins_wb6kcn.h"
 #endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_pins_n5fpp.h"
+#endif
 #ifdef HARDWARE_TEST
   #include "rotator_pins_test.h"
 #endif
@@ -529,6 +535,9 @@
 #endif
 #ifdef HARDWARE_M0UPU
   #include "rotator_settings_m0upu.h"
+#endif
+#ifdef HARDWARE_N5FPP
+  #include "rotator_settings_n5fpp.h"
 #endif
 #ifdef HARDWARE_TEST
   #include "rotator_settings_test.h"
@@ -820,7 +829,7 @@ byte current_az_speed_voltage = 0;
 #endif
 
 #if defined(FEATURE_GPS)
-  SERIAL_PORT_CLASS * gps_port;
+  GPS_SERIAL_PORT_CLASS * gps_port;
   #ifdef GPS_MIRROR_PORT
     SERIAL_PORT_CLASS * (gps_mirror_port);
   #endif //GPS_MIRROR_PORT
@@ -927,7 +936,7 @@ byte current_az_speed_voltage = 0;
   unsigned long autocorrect_az_submit_time = 0;
   #ifdef FEATURE_ELEVATION_CONTROL
     byte autocorrect_state_el = AUTOCORRECT_INACTIVE;
-    float autocorrect_el = 0;
+    float autocorrect_el = 0;#include <moon2.h>
     unsigned long autocorrect_el_submit_time = 0;
   #endif //FEATURE_ELEVATION_CONTROL
 #endif //FEATURE_AUTOCORRECT
@@ -1047,9 +1056,29 @@ DebugClass debug;
   unsigned long last_activity_time_autopark = 0;
 #endif  
 
+#if defined(HARDWARE_N5FPP)
+void ledPulse(int pin = 13, int duration = 1500, int interval = 250)
+{
+    pinModeEnhanced(pin, OUTPUT);
+
+    while (duration > 0) {
+        digitalWriteEnhanced(pin, HIGH);
+        delay(interval);
+        duration -= interval;
+        digitalWriteEnhanced(pin, LOW);
+        delay(interval);
+        duration -= interval;
+    }
+}
+#endif //HARDWARE_N5FPP
+
 /* ------------------ let's start doing some stuff now that we got the formalities out of the way --------------------*/
 
 void setup() {
+
+#if defined(HARDWARE_N5FPP)
+  ledPulse (2);
+#endif
 
   delay(1000);
 
@@ -5310,6 +5339,9 @@ void output_debug(){
 
         debug.print("debug: \t");
         debug.print(CODE_VERSION);
+        #ifdef HARDWARE_N5FPP
+          debug.print(" HARDWARE_N5FPP (Teensy 3.2)");
+        #endif
         #ifdef HARDWARE_WB6KCN
           debug.print(" HARDWARE_WB6KCN");
         #endif
