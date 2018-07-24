@@ -414,7 +414,7 @@
   #include "rotator_features_test.h"
 #endif    
 #if !defined(HARDWARE_CUSTOM)
-  #include "rotator_features_n5fpp.h" 
+  #include "rotator_features.h" 
 #endif      
   
 #include "rotator_dependencies.h"
@@ -436,11 +436,11 @@
   #include <LCD.h>   // required for YourDuino.com I2C LCD display
 #endif  
 
-#ifdef FEATURE_LCD_DISPLAY
+#if defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)
   #include "rotator_k3ngdisplay.h"
 #endif    
 
-#ifdef FEATURE_WIRE_SUPPORT
+#if defined(FEATURE_WIRE_SUPPORT)
   #include <Wire.h>  // required for FEATURE_I2C_LCD, any ADXL345 feature, FEATURE_AZ_POSITION_HMC5883L, FEATURE_EL_POSITION_ADAFRUIT_LSM303
 #endif
 
@@ -574,6 +574,7 @@
 
 // N5FPP - needed to satisfy compiler for forward reference
 #ifdef FEATURE_MOON_TRACKING
+  char * azimuth_direction(int);
   char * moon_status_string();
   char * sun_status_string();
 #endif // FEATURE_MOON_TRACKING
@@ -971,9 +972,9 @@ byte current_az_speed_voltage = 0;
 
 DebugClass debug;
 
-#if defined(FEATURE_LCD_DISPLAY)
-  K3NGdisplay k3ngdisplay(LCD_COLUMNS,LCD_ROWS,LCD_UPDATE_TIME);
-#endif   
+#if defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)
+  K3NGdisplay k3ngdisplay = K3NGdisplay(LCD_COLUMNS,LCD_ROWS,LCD_UPDATE_TIME);
+#endif
 
 #if defined(FEATURE_AZ_POSITION_HMC5883L) || defined(FEATURE_AZ_POSITION_HMC5883L_USING_JARZEBSKI_LIBRARY)
   HMC5883L compass;
@@ -1156,7 +1157,7 @@ void loop() {
     check_serial();
   #endif
 
-  #ifdef FEATURE_LCD_DISPLAY
+  #if defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)
     update_display();
   #endif
 
@@ -3511,7 +3512,7 @@ char * idle_status(){
 #endif //FEATURE_LCD_DISPLAY
 // --------------------------------------------------------------
 
-#if defined(FEATURE_LCD_DISPLAY) && defined(OPTION_DISPLAY_DIRECTION_STATUS)  
+#if (defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)) && defined(OPTION_DISPLAY_DIRECTION_STATUS)  
 char * azimuth_direction(int azimuth_in){
 
   azimuth_in = azimuth_in / HEADING_MULTIPLIER;
@@ -3572,7 +3573,7 @@ char * azimuth_direction(int azimuth_in){
 #endif /* ifdef FEATURE_LCD_DISPLAY */
 
 // --------------------------------------------------------------
-#if defined(FEATURE_LCD_DISPLAY)
+#if defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)
 void update_display(){
 
     
@@ -7374,8 +7375,7 @@ void initialize_serial(){
 
 void initialize_display(){
 
-
-  #if defined(FEATURE_LCD_DISPLAY)
+  #if defined(FEATURE_LCD_DISPLAY) || defined(FEATURE_ADAFRUIT_SSD1325)
     #ifdef DEBUG_LOOP
       debug.print("initialize_display()\n");
       Serial.flush();

@@ -87,9 +87,9 @@
 #  define OLED_CS 10
 
 #  if defined (GFX_SPI_SOFT)
-Adafruit_SSD1325 lcd(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+  Adafruit_SSD1325 lcd(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 #  else
-Adafruit_SSD1325 lcd(OLED_DC, OLED_RESET, OLED_CS);
+  Adafruit_SSD1325 lcd(OLED_DC, OLED_RESET, OLED_CS);
 #  endif
 #endif
 
